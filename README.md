@@ -131,3 +131,73 @@ class Product(models.Model):
     
     python manage.py migrate
 ```
+
+## Creating a View [views.py] ##
+```python 
+    from django.http import HttpResponse
+
+    class Home(*args, **kwargs):
+        return Response("<h1> Hello World </h1>")
+```
+
+## Create a url for the view trydjango[urls.py] ##
+```python
+    from django.conf.urls import url
+    from django.contrib import admin
+    from products.views import home
+
+    urlpatterns = [
+        url(r'^admin/', admin.site.urls),
+        url(r'^', home, name="home"),
+    ]
+```
+
+## Print arguments and keyword arguments[views.py] ##
+```python
+    class Home(*args, **kwargs):
+        print(args, kwargs) # We can see in the server 
+        return Response("<h1> Hello World </h1>")
+```
+```bash
+    (<WSGIRequest: GET '/'>,), {})
+```
+Therefore we can write,
+```python
+    class Home(request, *args, **kwargs):
+        print(args, kwargs) # We can see in the server 
+        ## We will see the request
+        return Response("<h1> Hello World </h1>")
+```
+
+## What can request do ? ##
+* We can see the which user sent the request, authentication,login helps
+```python
+        class Home(request, *args, **kwargs):
+        # print(args, kwargs) # We can see in the server 
+        # print(request.user) # Requested user info
+        return Response("<h1> Hello World </h1>")
+```
+
+## Template (views.py) ##
+```python
+from django.shortcuts import render
+
+# Create your views here.
+def home(request, *args, **kwargs): 
+    return render(request, "home.html", {})
+```
+
+## Templates in src folder ##
+```bash
+    mkdir templates
+```
+
+## Setup Django where templates are (settings.py) ##
+```python
+    TEMPLATES = [
+        {
+            'DIRS': [os.path.join(BASE_DIR, 'templates')],
+            ...
+        }
+    ]
+```
