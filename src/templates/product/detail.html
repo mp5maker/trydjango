@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h1>Items</h1>
+            <div class="information">
+                <ul>
+                    <li>
+                        <span>
+                            {{ obj.title }}
+                        </span>
+                        {% if obj.description != Null and obj.description != '' %}
+                        <span>
+                            {{ obj.description}}
+                        </span>
+                        {% else %}
+                        <span>
+                            Coming Soon
+                        </span>
+                        {% endif %}
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

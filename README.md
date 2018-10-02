@@ -205,10 +205,185 @@ def home(request, *args, **kwargs):
 ```html
     [Jinja Template Inheritance]
     {% extends 'base.html'}
-    
     {% block content %}
     {% endblock %}
 
     [Jinja Template Include]
     {% include 'layouts/navbar.html' %}
+
+    [Jinja Template for Loop]
+    {% for item in list %}
+    {% endfor %}
+    We can use *forloop.counter* to count the loop
+
+    [Jinja Template Conditions]
+    {% if <<condition>> %}
+    {% elif <<condition>> %}
+    {% else %}
+    {% endif %}
+```
+
+## Template Tag Filters ##
+* {{ variable | upper }}
+* {{ variable | add }}
+* {{ variable | slugify }}
+* {{ variable | capfirst }}
+* {{ variable | safe }}
+* {{ variable | striptags }}
+
+## Access the Data through Shell ##
+<< Get the Query Set >>
+```bash
+    from products.models import Product
+    obj = Product.objects.all()
+    str(obj.query)
+    print obj
+```
+<< Get all the attributes, mthod of a certain object >>
+```bash
+    from products.models import Product
+    obj = Product.objects.get(pk=1)
+    dir(obj)
+    obj.title
+```
+## Render Data from the Database ##
+1. Write the naming convention of the functions in the view in lowercase
+2. Write the name convention of the functions in the model in uppercase
+
+views.py
+```python
+    from .models import Product 
+    def product_detail(request, *args, **kwargs):
+    obj = Product.objects.get(pk=1)
+    context = {
+        "title": obj.title,
+        "description": obj.description
+    }
+    return render(request, 'product/detail.html', context)
+```
+product/detail.html
+```html
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h1>Items</h1>
+            <div class="information">
+                <ul>
+                    <li>
+                        <span>
+                            {{ title }}
+                        </span>
+                        {% if description != Null and description != '' %}
+                        <span>
+                            {{ description}}
+                        </span>
+                        {% else %}
+                        <span>
+                            Coming Soon
+                        </span>
+                        {% endif %}
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+```
+views.py [Improved]
+```python
+def product_detail(request, *args, **kwargs):
+    obj = Product.objects.get(pk=1)
+    context = {
+        "obj": obj
+    }
+    return render(request, 'product/detail.html', context)
+```
+
+## Changing the location of the template ##
+Inside the Product app,
+```bash
+    mkdir templates
+    cd templates 
+    mkdir products
+    touch detail.html
+```
+Intentionally making mistake in views.py
+```bash
+    return render(request, 'productss/detail.html', context)
+```
+
+Checking the Template loader post mortem
+```bash
+django.template.loaders.filesystem.Loader: /home/photon/Downloads/trydjango/src/templates/productss/detail.html 
+```
+*Comes from the settings*
+*'DIRS': [os.path.join(BASE_DIR, 'templates')]*
+
+
+```bash
+django.template.loaders.app_directories.Loader: /home/photon/Downloads/trydjango/src/products/templates/productss/detail.html
+```
+*Comes from the products app*
+
+```bash
+django.template.loaders.app_directories.Loader: /home/photon/.virtualenvs/trydjango/local/lib/python2.7/site-packages/django/contrib/admin/templates/productss/detail.html
+```
+*Comes from the contrib/admin
+
+
+```bash
+django.template.loaders.app_directories.Loader: /home/photon/.virtualenvs/trydjango/local/lib/python2.7/site-packages/django/contrib/auth/templates/productss/detail.html
+```
+*Comes from the contrib/auth
+
+## Django Forms ##
+```bash
+touch forms.py
+```
+forms.py
+```python
+from django import forms
+from .models import Product
+
+class ProductForm(forms.ModelForm):
+    class Meta:
+        model = Product
+        fields = [
+            'title',
+            'description',
+            'price'
+        ]
+```
+
+views.py
+```python
+from .forms import ProductForm
+def product_form_view(request, *args, **kwargs):
+    form = ProductForm(requestPost or None)
+    if form.is_valid():
+        form.save()
+    context = {
+        "form": form
+    }
+    return render(request, 'product_form_view.html', context)
+```
+products/product_form_view.html
+```html
+{% extends 'base.html' %}
+
+{% block content %}
+<form>
+    {{ form.as_p }}
+    <input type="submit" value="Save"/>
+</form>
+{% endblock %}
+```
+
+[trydjango] urls.py
+```python
+url(r'^product/create/', product_form_view, name="product_form_view")
 ```

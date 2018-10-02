@@ -4,7 +4,46 @@
 <div class="container">
     <div class="row">
         <div class="col">
-            About Page
+            <h1>
+                About Page
+            </h1>
+            {% comment 'Notes for About Page' %}
+                <p>This page consists of head office and what we do</p>
+            {% endcomment %}
+            <div class="information">
+                {{ 'list of all our office locations'|slugify|capfirst }}
+            </div>
+            <div class="list-of-all-addresses">
+                <ul>
+                    {% for a in address %}
+                    <li>
+                        <span>
+                            {{ forloop.counter }} -
+                        </span>
+                        <span>
+                            {{ a|upper }} 
+                        </span>
+                        {% if a == 'Dhanmondi' %}
+                        <span>
+                            <em>
+                                Consultation Office
+                            </em>
+                        </span>
+                        {% elif a == 'Gulshan' %}
+                        <span>
+                            <strong> Head Office </strong>
+                        </span>
+                        {% else %}
+                        <span>
+                            <em>
+                                Office
+                            </em>
+                        </span>  
+                        {% endif %}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
         </div>
     </div>
 </div>
