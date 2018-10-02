@@ -201,3 +201,14 @@ def home(request, *args, **kwargs):
         }
     ]
 ```
+## Using Jinja Templates ##
+```html
+    [Jinja Template Inheritance]
+    {% extends 'base.html'}
+    
+    {% block content %}
+    {% endblock %}
+
+    [Jinja Template Include]
+    {% include 'layouts/navbar.html' %}
+```

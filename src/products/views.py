@@ -15,3 +15,9 @@ def home(request, *args, **kwargs): # *args, **kwargs
     
     # return HttpResponse("<h1>Hello World</h1>") #string of HTML Code
     return render(request, "home.html", {})
+
+def contact(request, *args, **kwargs):
+    return render(request, "contact.html", {})
+
+def about(request, *args, **kwargs):
+    return render(request, "about.html", {}) 
