@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 #from django.http import HttpResponse
 from django.shortcuts import render
 from .models import Product
-from .forms import ProductForm
+from .forms import ProductForm, ProductRawForm
 
 # Create your views here.
 def home(request, *args, **kwargs): # *args, **kwargs
@@ -44,10 +44,27 @@ def product_detail(request, *args, **kwargs):
 
 def product_form_view(request, *args, **kwargs):
     form = ProductForm(request.POST or None)
-    if form.is_valid():
-        form.save()
+    if form.is_valid(): # Checks the validation of the form
+        form.save() # Saves the data into the database
+        form = ProductForm() # Clears the field of the form after the form is sent
     
     context = {
         "form": form
     }
     return render(request, "products/product_form_view.html", context)
+
+def product_form_raw(request, *args, **kwargs):
+    my_form = ProductRawForm()
+    if request.method == "POST":
+        my_form = ProductRawForm(request.POST)
+        if my_form.is_valid():
+            print my_form.cleaned_data 
+            Product.objects.create(**my_form.cleaned_data)
+        else:
+            print my_form.errors
+    else:
+        my_form = ProductRawForm(None)
+    context = {
+        "form": my_form
+    }
+    return render(request, 'products/product_form_raw.html', context)

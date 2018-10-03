@@ -366,6 +366,7 @@ def product_form_view(request, *args, **kwargs):
     form = ProductForm(requestPost or None)
     if form.is_valid():
         form.save()
+        form = ProductForm()
     context = {
         "form": form
     }
@@ -376,7 +377,8 @@ products/product_form_view.html
 {% extends 'base.html' %}
 
 {% block content %}
-<form>
+<form method="POST">
+    {% csrf_token %}
     {{ form.as_p }}
     <input type="submit" value="Save"/>
 </form>
@@ -387,3 +389,66 @@ products/product_form_view.html
 ```python
 url(r'^product/create/', product_form_view, name="product_form_view")
 ```
+
+## Creating Raw Django Form  ##
+views.py
+```python
+def product_form_raw(request, *args, **kwargs):
+    my_form = ProductRawForm()
+    if request.method == "POST":
+        my_form = ProductRawForm(request.POST)
+        if my_form.is_valid():
+            print my_form.cleaned_data 
+            Product.objects.create(**my_form.cleaned_data)
+        else:
+            print my_form.errors
+    else:
+        my_form = ProductRawForm(None)
+    context = {
+        "form": my_form
+    }
+    return render(request, 'products/product_form_raw.html', context)
+```
+
+forms.py
+```python
+class ProductRawForm(forms.Form):
+    title = forms.CharField()
+    description = forms.CharField()
+    price = forms.DecimalField()
+    summary = forms.CharField()
+    featured = forms.BooleanField()
+```
+
+[trydjango] urls.py
+```python
+    url(r'^product/rawcreate/', product_form_raw, name="product_form_raw")
+```
+## Form Widgets ##
+forms.py
+```python
+    class ProductRawForm(forms.Form):
+    title = forms.CharField(
+                        label='', 
+                        widget=forms.TextInput(
+                            attrs= {
+                                "placeholder": "Your title"
+                            }
+                        )
+                    )
+    description = forms.CharField(
+                        required=False, 
+                        widget=forms.Textarea(
+                            attrs={
+                                "class": "new-class-name two",
+                                "rows": 10,
+                                "cols": 20
+                            }
+                        )
+                    )
+    price = forms.DecimalField(initial=12.99)
+    summary = forms.CharField()
+    featured = forms.BooleanField()
+```
+
+## Form Validation Methods ##
