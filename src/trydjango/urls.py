@@ -15,7 +15,13 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
-from products.views import home, contact, about, product_detail, product_form_view, product_form_raw
+from products.views import (
+                                home, contact, 
+                                about, product_detail, 
+                                product_form_view, 
+                                product_form_raw, product_initial_data,
+                                dynamic_lookup_view
+                            )
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -24,5 +30,7 @@ urlpatterns = [
     url(r'^about/', about, name="about"),
     url(r'^product/detail/', product_detail, name="product_detail"),
     url(r'^product/create/', product_form_view, name="product_form_view"),
-    url(r'^product/rawcreate/', product_form_raw, name="product_form_raw")
+    url(r'^product/rawcreate/', product_form_raw, name="product_form_raw"),
+    url(r'^product/initialdata/', product_initial_data, name="product_initial_data"),
+    url(r'^product/dynamic-lookup/(?P<product_id>[0-9]+)/', dynamic_lookup_view, name="dynamic_look_view"),
 ]

@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 #from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404, Http404
 from .models import Product
 from .forms import ProductForm, ProductRawForm
 
@@ -68,3 +68,28 @@ def product_form_raw(request, *args, **kwargs):
         "form": my_form
     }
     return render(request, 'products/product_form_raw.html', context)
+
+def product_initial_data(request, *args, **kwargs):
+    initial_data = {
+        "title": "Initial Data"
+    }
+    obj = Product.objects.get(pk=1)
+    form = ProductForm(request.POST or None, initial=initial_data, instance=obj)
+    if form.is_valid():
+        form.save()
+    context = {
+        "form": form
+    }
+    return render(request, 'products/product_initial_data.html', context)
+
+def dynamic_lookup_view(request, product_id):
+    obj = get_object_or_404(Product, id=product_id)
+    # try:
+    #     obj = Product.objects.get(id=product_id)
+    # except Product.DoesNotExist:
+    #     raise Http404
+    context = {
+        "obj": obj
+    }
+    return render(request, "products/dynamic_lookup.html", context)
+    

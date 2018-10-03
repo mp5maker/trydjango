@@ -441,6 +441,7 @@ forms.py
                         widget=forms.Textarea(
                             attrs={
                                 "class": "new-class-name two",
+                                "id": "my-id-for-text-area",
                                 "rows": 10,
                                 "cols": 20
                             }
@@ -452,3 +453,86 @@ forms.py
 ```
 
 ## Form Validation Methods ##
+```python
+class ProductForm(forms.ModelForm):
+title = forms.CharField(
+    label='',
+    widget=forms.TextInput(
+        attrs={
+            "placeholder": "Your Title"
+        }
+    )
+)
+class Meta:
+    model = Product
+    fields = [
+        'title',
+        'description',
+        'price',
+        'summary',
+        'featured',
+    ]
+def clean_title(self, *args, **kwargs):
+    title = self.cleaned_data.get("title")
+    if not "Photon" in title:
+        raise forms.ValidationError("This is not a valid title")
+    return title
+
+def clean_price(self, *args, **kwargs):
+    price = self.cleaned_data.get("price")
+    if price < 0:
+        raise forms.ValidationError("This is not a valid number")
+    return price
+```
+
+## Set Initial Data to the form ##
+views.py
+```python
+def product_initial_data(request, *args, **kwargs):
+    initial_data = {
+        "title": "Initial Data"
+    }
+    obj = Product.objects.get(pk=1)
+    form = ProductForm(request.POST or None, initial=initial_data, instance=obj)
+    if form.is_valid():
+        form.save()
+    context = {
+        "form": form
+    }
+    return render(request, 'products/product_initial_data.html', context)
+```
+
+## Dynamic URL Routing ##
+urls.py
+```python
+    url(r'^product/dynamic-lookup/(?P<product_id>[0-9]+)/', dynamic_lookup_view, name="dynamic_look_view"),
+```
+
+views.py
+```python
+    def dynamic_lookup_view(request, product_id):
+        obj = Product.objects.get(id=product_id)
+        context = {
+            "obj": obj
+        }
+        return render(request, "products/dynamic_lookup.html", context)
+
+```
+
+## Handle the Page that doesn't exist ##
+views.py
+```python
+from django.shortcuts import render, get_object_or_404, Http404
+
+def dynamic_lookup_view(request, product_id):
+    obj = get_object_or_404(Product, id=product_id)
+    # try:
+    #     obj = Product.objects.get(id=product_id)
+    # except Product.DoesNotExist:
+    #     raise Http404
+    context = {
+        "obj": obj
+    }
+    return render(request, "products/dynamic_lookup.html", context)
+
+```
