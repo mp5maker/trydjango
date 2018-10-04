@@ -536,3 +536,39 @@ def dynamic_lookup_view(request, product_id):
     return render(request, "products/dynamic_lookup.html", context)
 
 ```
+
+## Delete a object in the database ##
+views.py
+```python
+from django.shortcuts import redirect, get_object_or_404
+
+def product_delete_view(request, product_id, *args, **kwargs):
+    obj = get_object_or_404(Product, id=product_id)
+    if request.method == "POST":
+        obj.delete()
+        return redirect("home/")
+    context = {
+        "obj": obj
+    }
+    return render(request, "products/product_delete.html", context)
+```
+
+urls.py
+```python
+url(r'^product/delete/(?P<product_id>[0-9]+)/', product_delete_view, name="product_delete_view")
+```
+products/product_delete.html
+```html
+{% extends 'base.html' %}
+
+{% block content %}
+<form action="." method="POST">
+    {% csrf_token %}
+    <h1> Do you want to delete the product {{ obj.title }}</h1>
+    <p>
+        <input type="submit" value="Yes"/>
+        <a href="../">Cancel</a>
+    </p>
+</form>
+{% endblock %}
+```

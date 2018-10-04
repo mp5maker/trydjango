@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 #from django.http import HttpResponse
-from django.shortcuts import render, get_object_or_404, Http404
+from django.shortcuts import render, get_object_or_404, Http404, redirect
 from .models import Product
 from .forms import ProductForm, ProductRawForm
 
@@ -92,4 +92,19 @@ def dynamic_lookup_view(request, product_id):
         "obj": obj
     }
     return render(request, "products/dynamic_lookup.html", context)
+
+def product_delete_view(request, product_id, *args, **kwargs):
+    obj = get_object_or_404(Product, id=product_id)
+    if request.method == "POST":
+        obj.delete()
+        return redirect("/home/")
+    context = {
+        "obj": obj
+    }
+    return render(request, "products/product_delete.html", context)
     
+def product_list_view(request, *args, **kwargs):
+    context = {
+
+    }
+    return render(request, "products/product_list.html", context)
