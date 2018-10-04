@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                {% for product in products %}
+                <div class="card-content">
+                    <div class="card-title">
+                        <h1>
+                            {{ product.title }}
+                        </h1>
+                    </div>
+                    <div class="card-body">
+                        <div class="description">
+                            <div>
+                                <p>
+                                    {{ product.description }}
+                                </p>
+                            </div>
+                            <div>
+                                <p>
+                                    {{ product.summary }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <p>
+                            <span>
+                                Price: 
+                            </span>
+                            <span>
+                                <em>
+                                    {{ product.price }}
+                                </em>
+                            </span>
+                        </p>
+                        <p>
+                            <span>
+                                Details Link: 
+                            </span>
+                            <span>
+                                <em>
+                                    <a href = "{{ product.get_absolute_url }}">
+                                        {{ product.title }}
+                                    </a>
+                                    
+                                </em>
+                            </span>
+                        </p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

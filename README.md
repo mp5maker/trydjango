@@ -572,3 +572,100 @@ products/product_delete.html
 </form>
 {% endblock %}
 ```
+
+## Getting list of all the objects from the model ##
+```bash
+     from products.models import Product
+     Product._meta.get_fields()
+```
+views.py
+```python
+    def product_list_view(request, *args, **kwargs):
+    queryset = Product.objects.all()
+    context = {
+        "products": queryset
+    }
+    return render(request, "products/product_list.html", context)
+```
+
+urls.py
+```python
+     url(r'^product/product-list/', product_list_view, name="product_list_view")
+```
+
+model.py
+```python
+class Product(models.Model):
+    title       = models.CharField(max_length=120) # max_length is required
+    description = models.TextField(blank=True, null=True)
+    price       = models.DecimalField(decimal_places=2, max_digits=1000)
+    summary     = models.TextField(default="Write Meaningful Description")
+    ## Added After two products were added, featured was added
+    featured    = models.BooleanField() # null=True, default=True
+
+    ## Get Absolute Url using the string substitution
+    def get_absolute_url(self):
+        return "/product/dynamic-lookup/{self.id}/"
+```
+
+/products/product_list.html
+```html
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                {% for product in products %}
+                <div class="card-content">
+                    <div class="card-title">
+                        <h1>
+                            {{ product.title }}
+                        </h1>
+                    </div>
+                    <div class="card-body">
+                        <div class="description">
+                            <div>
+                                <p>
+                                    {{ product.description }}
+                                </p>
+                            </div>
+                            <div>
+                                <p>
+                                    {{ product.summary }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <p>
+                            <span>
+                                Price: 
+                            </span>
+                            <span>
+                                <em>
+                                    {{ product.price }}
+                                </em>
+                            </span>
+                        </p>
+                        <p>
+                            <span>
+                                Details Link: 
+                            </span>
+                            <span>
+                                <em>
+                                    
+                                </em>
+                            </span>
+                        </p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+```
+
+## Absolute Urls Generating from Django ##

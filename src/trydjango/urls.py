@@ -20,7 +20,8 @@ from products.views import (
                                 about, product_detail, 
                                 product_form_view, 
                                 product_form_raw, product_initial_data,
-                                dynamic_lookup_view, product_delete_view 
+                                dynamic_lookup_view, product_delete_view,
+                                product_list_view
                             )
 
 urlpatterns = [
@@ -33,5 +34,6 @@ urlpatterns = [
     url(r'^product/rawcreate/', product_form_raw, name="product_form_raw"),
     url(r'^product/initialdata/', product_initial_data, name="product_initial_data"),
     url(r'^product/dynamic-lookup/(?P<product_id>[0-9]+)/', dynamic_lookup_view, name="dynamic_look_view"),
-    url(r'^product/delete/(?P<product_id>[0-9]+)/', product_delete_view, name="product_delete_view")
+    url(r'^product/delete/(?P<product_id>[0-9]+)/', product_delete_view, name="product_delete_view"),
+    url(r'^product/product-list/', product_list_view, name="product_list_view")
 ]

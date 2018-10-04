@@ -11,3 +11,5 @@ class Product(models.Model):
     summary     = models.TextField(default="Write Meaningful Description")
     ## Added After two products were added, featured was added
     featured    = models.BooleanField() # null=True, default=True
+
+    ## Get Absolute Url using the string substitution
