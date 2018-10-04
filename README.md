@@ -654,7 +654,9 @@ class Product(models.Model):
                             </span>
                             <span>
                                 <em>
-                                    
+                                    <a href = "{{ product.get_absolute_url }}">
+                                        {{ product.title }}
+                                    </a>
                                 </em>
                             </span>
                         </p>
@@ -669,3 +671,168 @@ class Product(models.Model):
 ```
 
 ## Absolute Urls Generating from Django ##
+models.py
+```python
+## Get Absolute Url using the string substitution
+def get_absolute_url(self):
+    return f"/product/dynamic-lookup/{self.id}"
+```
+
+Better way to do it
+```python
+ ## Uses the name of the urls
+    def get_absolute_url(self):
+        return reverse("dynamic_lookup_view", kwargs={"product_id": self.id})
+```
+
+## Taking the urls to the app modules ##
+trydjango urls.py
+```python
+ url(r'^products/', include('products.urls'))
+```
+
+products urls.py
+```python
+from django.conf.urls import url
+
+from .views import (
+    home, contact,
+    about, product_detail,
+    product_form_view,
+    product_form_raw, product_initial_data,
+    dynamic_lookup_view, product_delete_view,
+    product_list_view
+)
+
+urlpatterns = [
+    url(r'^home/', home, name="home"),
+    url(r'^contact/', contact, name="contact"),
+    url(r'^about/', about, name="about"),
+    url(r'^product/detail/', product_detail, name="product_detail"),
+    url(r'^product/create/', product_form_view, name="product_form_view"),
+    url(r'^product/rawcreate/', product_form_raw, name="product_form_raw"),
+    url(r'^product/initialdata/', product_initial_data, name="product_initial_data"),
+    url(r'^product/dynamic-lookup/(?P<product_id>[0-9]+)/', dynamic_lookup_view, name="dynamic_lookup_view"),
+    url(r'^product/delete/(?P<product_id>[0-9]+)/', product_delete_view, name="product_delete_view"),
+    url(r'^product/product-list/', product_list_view, name="product_list_view")
+]
+```
+
+## Namespacing the urls ##
+products.urls.py
+```python
+# This namespaces the url
+app_name = "products"
+```
+
+products.models.py
+```python
+    def get_absolute_url(self):
+        # return f"/product/dynamic-lookup/{self.id}" # Better Way to url
+        
+        # This is going to use the name of the url
+        return reverse("products:dynamic_lookup_view", kwargs={"product_id": self.id})
+```
+
+> Products related links are in products app and home, about, contact are in pages app from now on
+* Simple Task: **Organize the contact, home, about ** to a app called pages
+
+## Create a Blog App ##
+> All the methods are like previous ones
+
+models.py
+```python
+from django.db import models
+
+# Create your models here.
+class Article(models.Model):
+    title = models.CharField(max_length=120)
+    content = models.TextField()
+    active = models.BooleanField(default=True)
+```
+
+## For Class Based Views ##
+views.py
+```python
+from django.views.generic import (
+    CreateView,
+    DetailView,
+    ListView,
+    UpdateView,
+    ListView,
+    DeleteView
+)
+from .models import Article
+
+class ArticleListView(ListView):
+    template_name = 'articles/article_list.html'
+    queryset = Article.objects.all() 
+```
+
+forms.py
+```python
+from .models import Article
+from django.forms import ModelForm
+
+class ArticleForm(ModelForm):
+    class Meta:
+        model = Article
+        field = [
+            'title',
+            'content',
+            'active'
+        ]
+```
+
+urls.py
+```python
+from django.conf.urls import url
+from .views import ArticleListView
+
+urlpatterns = [
+    url(r'^article-list/', ArticleListView.as_view(), name="article-list-view")
+]
+```
+html
+```html
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col">
+            {% for instance in object_list %}
+            <div class="card">
+                <div class="card-content">
+                    <div class="card-header">
+                        <p>
+                            <strong>
+                                {{ forloop.counter }} - {{ instance.title }}
+                            </strong>
+                        </p>
+                    </div>
+                    <div class="card-body">
+                        <p>
+                            <small>
+                                {{ instance.content }}
+                            </small>
+                        </p>
+                    </div>
+                    <div class="card-footer">
+                        <p>
+                            <em>
+                                <a href="">
+                                    {{ instance.title }}
+                                </a>
+                            </em>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+```
+## Completed Code ##

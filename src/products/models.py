@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db import models
+from django.urls import reverse
 
 # Create your models here.
 class Product(models.Model):
@@ -13,3 +14,8 @@ class Product(models.Model):
     featured    = models.BooleanField() # null=True, default=True
 
     ## Get Absolute Url using the string substitution
+    def get_absolute_url(self):
+        # return f"/product/dynamic-lookup/{self.id}" # Better Way to url
+        
+        # This is going to use the name of the url
+        return reverse("products:dynamic_lookup_view", kwargs={"product_id": self.id})

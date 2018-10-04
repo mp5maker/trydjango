@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col">
+            {% for instance in object_list %}
+            <div class="card">
+                <div class="card-content">
+                    <div class="card-header">
+                        <p>
+                            <strong>
+                                {{ forloop.counter }} - {{ instance.title }}
+                            </strong>
+                        </p>
+                    </div>
+                    <div class="card-body">
+                        <p>
+                            <small>
+                                {{ instance.content }}
+                            </small>
+                        </p>
+                    </div>
+                    <div class="card-footer">
+                        <p>
+                            <em>
+                                <a href="{{ instance.get_absolute_url }}">
+                                    {{ instance.title }}
+                                </a>
+                            </em>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
