@@ -1,10 +1,10 @@
+from django import forms
 from .models import Article
-from django.forms import ModelForm
 
-class ArticleForm(ModelForm):
+class ArticleModelForm(forms.ModelForm):
     class Meta:
         model = Article
-        field = [
+        fields = [
             'title',
             'content',
             'active'

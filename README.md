@@ -777,7 +777,7 @@ from django.forms import ModelForm
 class ArticleForm(ModelForm):
     class Meta:
         model = Article
-        field = [
+        fields = [
             'title',
             'content',
             'active'
@@ -835,4 +835,4 @@ html
 </div>
 {% endblock %}
 ```
-## Completed Code ##
+
