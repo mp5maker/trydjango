@@ -19,3 +19,7 @@ class Product(models.Model):
         
         # This is going to use the name of the url
         return reverse("products:dynamic_lookup_view", kwargs={"product_id": self.id})
+    
+    ## Changing the name of the objects in the admin.site.register(Django Admin)
+    def __str__(self):
+        return self.title

@@ -835,4 +835,7 @@ html
 </div>
 {% endblock %}
 ```
+> Check the Blog App
 
+## More Concepts Based on Views ##
+**In concept app**
